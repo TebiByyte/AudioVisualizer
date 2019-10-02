@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
 [ExecuteInEditMode]
-public class RayMarchCamera : MonoBehaviour
+public class RayMarchCamera : SceneViewFilter
 {
     [SerializeField]
     private Shader _shader;
@@ -38,11 +38,15 @@ public class RayMarchCamera : MonoBehaviour
         }
     }
 
+    public Texture3D texture;
+
     private Camera _cam;
 
     public Transform _directionalLight;
 
     public float _maxDistance;
+
+    private bool genTex = false;
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -51,10 +55,17 @@ public class RayMarchCamera : MonoBehaviour
             Graphics.Blit(source, destination);
         }
 
+        if (!genTex)
+        {
+            genTex = true;
+            texture = CreateTexture3D(256);
+        }
+
         _raymarchMaterial.SetVector("_lightDir", _directionalLight ? _directionalLight.forward : Vector3.down);
         _raymarchMaterial.SetMatrix("_CamFrustrum", CamFrustrum(_camera));
         _raymarchMaterial.SetMatrix("_CamToWorld", _camera.cameraToWorldMatrix);
         _raymarchMaterial.SetFloat("_maxDistance", _maxDistance);
+        _raymarchMaterial.SetTexture("_NoiseTex", texture);
 
         RenderTexture.active = destination;
         _raymarchMaterial.SetTexture("_MainTex", source);
@@ -99,5 +110,48 @@ public class RayMarchCamera : MonoBehaviour
         frustrum.SetRow(3, bl);
 
         return frustrum;
+    }
+
+    private float PerlinNoise3D(float x, float y, float z)
+    {
+        y += 1;
+        z += 2;
+        float xy = _perlin3DFixed(x, y);
+        float xz = _perlin3DFixed(x, z);
+        float yz = _perlin3DFixed(y, z);
+        float yx = _perlin3DFixed(y, x);
+        float zx = _perlin3DFixed(z, x);
+        float zy = _perlin3DFixed(z, y);
+        return xy * xz * yz * yx * zx * zy;
+    }
+
+    private float _perlin3DFixed(float a, float b)
+    {
+        return Mathf.Sin(Mathf.PI * Mathf.PerlinNoise(a, b));
+    }
+
+    public Texture3D CreateTexture3D(int size)
+    {
+        Color[] colorArray = new Color[size * size * size];
+        texture = new Texture3D(size, size, size, TextureFormat.RGBA32, false);
+        
+        for (int x = 0; x < size; x++)
+        {
+            for (int y = 0; y < size; y++)
+            {
+                for (int z = 0; z < size; z++)
+                {
+                    float noise1 = PerlinNoise3D((float)x / size, (float)y / size, (float)z / size);
+                    float noise2 = PerlinNoise3D(2 * (float)x / size + 1000, 2 * (float)y / size, 2 * (float)z / size) / 2;
+                    float noise3 = PerlinNoise3D(4 * (float)x / size + 332, 4 * (float)y / size, 4 * (float)z / size) / 4;
+                    float finalNoise = (noise1 + noise2 + noise3) / 1.75f;
+                    colorArray[x + (y * size) + (z * size * size)] = new Color(finalNoise > 0.5f ? 1 : 0, 0, 0, 1.0f);
+                    
+                }
+            }
+        }
+        texture.SetPixels(colorArray);
+        texture.Apply();
+        return texture;
     }
 }

@@ -3,6 +3,7 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+		_NoiseTex("Texture", 3D) = "" {}
     }
     SubShader
     {
@@ -19,6 +20,7 @@
             #include "UnityCG.cginc"
 
 			sampler2D _MainTex;
+			sampler3D _NoiseTex;
 			uniform float4x4 _CamFrustrum, _CamToWorld;
 			uniform float _maxDistance;
 			uniform float3 _lightDir;
@@ -60,8 +62,8 @@
 				//float sphere1 = sdSphere(p, 1);
 				float result = 0;
 
-				if (p.x > -0.5f && p.x < 0.5f && p.y > -0.5f && p.y < 0.5f && p.z > -0.5f && p.z < 0.5f) {
-					result = 5;
+				if (p.x > 0 && p.x < 5 && p.y > 0 && p.y < 5 && p.z > 0 && p.z < 5) {
+					result = tex3D(_NoiseTex, p / 5).x;
 				}
 
 				return result;
@@ -70,21 +72,21 @@
 			fixed4 raymarching(float3 ro, float3 rd) 
 			{
 				const int max_iteration = 64;
-				const int shadow_step = 32;
+				const int shadow_step = 1;
 				float t = 0;//Distance travelled.
-				float stepSize = 1.0f / max_iteration;
-				float shadowStepSize = 1.0f / shadow_step;
+				float stepSize = 2.0f / max_iteration;
+				float shadowStepSize = 0.1f / shadow_step;
 				float3 lightEnergy = 0;
 				float density = stepSize;
 				float shadowDensity = shadowStepSize;
 				float transmittance = 1;
 
-				for (int i = 0; i < 4 * max_iteration; i++) 
+				for (int i = 0; i < max_iteration * 4; i++) 
 				{
 					float3 p = ro + rd * t;
 					float curSample = densityField(p);
 
-					if (curSample > 0.01f) {
+					if (curSample > 0.1f) {
 						float shadowDist = 0;
 						float st = 0;
 						float3 sp = p;
