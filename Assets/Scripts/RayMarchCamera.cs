@@ -40,6 +40,8 @@ public class RayMarchCamera : MonoBehaviour
 
     private Camera _cam;
 
+    public Transform _directionalLight;
+
     public float _maxDistance;
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -49,6 +51,7 @@ public class RayMarchCamera : MonoBehaviour
             Graphics.Blit(source, destination);
         }
 
+        _raymarchMaterial.SetVector("_lightDir", _directionalLight ? _directionalLight.forward : Vector3.down);
         _raymarchMaterial.SetMatrix("_CamFrustrum", CamFrustrum(_camera));
         _raymarchMaterial.SetMatrix("_CamToWorld", _camera.cameraToWorldMatrix);
         _raymarchMaterial.SetFloat("_maxDistance", _maxDistance);

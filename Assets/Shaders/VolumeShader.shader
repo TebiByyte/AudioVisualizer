@@ -21,6 +21,7 @@
 			sampler2D _MainTex;
 			uniform float4x4 _CamFrustrum, _CamToWorld;
 			uniform float _maxDistance;
+			uniform float3 _lightDir;
 
             struct appdata
             {
@@ -56,11 +57,11 @@
 
 			float densityField(float3 p) 
 			{
-				float sphere1 = sdSphere(p, 1);
+				//float sphere1 = sdSphere(p, 1);
 				float result = 0;
 
-				if (sphere1 <= 1) {
-					result = 0.5f;
+				if (p.x > -0.5f && p.x < 0.5f && p.y > -0.5f && p.y < 0.5f && p.z > -0.5f && p.z < 0.5f) {
+					result = 5;
 				}
 
 				return result;
@@ -69,21 +70,43 @@
 			fixed4 raymarching(float3 ro, float3 rd) 
 			{
 				const int max_iteration = 64;
+				const int shadow_step = 32;
 				float t = 0;//Distance travelled.
 				float stepSize = 1.0f / max_iteration;
-				float accumDist = 0;
+				float shadowStepSize = 1.0f / shadow_step;
+				float3 lightEnergy = 0;
+				float density = stepSize;
+				float shadowDensity = shadowStepSize;
+				float transmittance = 1;
 
 				for (int i = 0; i < 4 * max_iteration; i++) 
 				{
-
 					float3 p = ro + rd * t;
 					float curSample = densityField(p);
-					accumDist += curSample * stepSize;
+
+					if (curSample > 0.01f) {
+						float shadowDist = 0;
+						float st = 0;
+						float3 sp = p;
+
+						for (int s = 0; s < shadow_step; s++) {
+							sp = p - _lightDir * st;
+							float lSample = densityField(sp);
+							st += shadowStepSize;
+							shadowDist += lSample;
+						}
+
+						float curDensity = saturate(curSample * density);
+						float shadowTerm = exp(-shadowDist * shadowDensity);
+						float3 absorbedLight = shadowTerm * curDensity;
+						lightEnergy += absorbedLight * transmittance;
+						transmittance *= 1 - curDensity;
+					}
 					t += stepSize;
 
 				}
 
-				return accumDist;
+				return fixed4(lightEnergy, transmittance);
 			}
 
             fixed4 frag (v2f i) : SV_Target
@@ -92,9 +115,9 @@
 				float3 rayDirection = normalize(i.ray.xyz);
 				float3 rayOrigin = _WorldSpaceCameraPos;
 				fixed4 result = raymarching(rayOrigin, rayDirection);
-				float mult = min(1, result.w);
+				float3 fogColor = float3(1, 1, 1) * result.xyz;
 
-				return fixed4(col * (1 - mult) + fixed4(0.5f, 0.5f, 0.5f, 1) * mult , 1);
+				return fixed4(fogColor * (1 - result.w) + col * result.w , 1);
             }
             ENDCG
         }
