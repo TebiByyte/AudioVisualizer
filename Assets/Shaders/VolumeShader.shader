@@ -54,49 +54,47 @@
 				return length(p) - s;
 			}
 
-			float distanceField(float3 p) 
+			float densityField(float3 p) 
 			{
-				float sphere1 = sdSphere(p - float3(0, 0, 0), 2);
-				return sphere1;
-			}
+				float sphere1 = sdSphere(p, 1);
+				float result = 0;
 
-			fixed4 raymarching(float3 ro, float3 rd) 
-			{
-				fixed4 result = fixed4(1, 1, 1, 1);
-				const int max_iteration = 64;
-				float t = 0;//Distance travelled.
-
-				for (int i = 0; i < max_iteration; i++) 
-				{
-					if (t > _maxDistance) 
-					{
-						//Environment
-						result = fixed4(rd, 1);
-						break;
-					}
-
-					float3 p = ro + rd * t;
-					//check for a hit in distance field
-					float d = distanceField(p);
-					if (d < 0.01) 
-					{
-						result = fixed4(1, 1, 1, 1);
-						break;
-					}
-					t += d;
+				if (sphere1 <= 1) {
+					result = 0.5f;
 				}
 
 				return result;
 			}
 
+			fixed4 raymarching(float3 ro, float3 rd) 
+			{
+				const int max_iteration = 64;
+				float t = 0;//Distance travelled.
+				float stepSize = 1.0f / max_iteration;
+				float accumDist = 0;
+
+				for (int i = 0; i < 4 * max_iteration; i++) 
+				{
+
+					float3 p = ro + rd * t;
+					float curSample = densityField(p);
+					accumDist += curSample * stepSize;
+					t += stepSize;
+
+				}
+
+				return accumDist;
+			}
+
             fixed4 frag (v2f i) : SV_Target
             {
+				fixed3 col = tex2D(_MainTex, i.uv);
 				float3 rayDirection = normalize(i.ray.xyz);
 				float3 rayOrigin = _WorldSpaceCameraPos;
-
 				fixed4 result = raymarching(rayOrigin, rayDirection);
+				float mult = min(1, result.w);
 
-				return result;
+				return fixed4(col * (1 - mult) + fixed4(0.5f, 0.5f, 0.5f, 1) * mult , 1);
             }
             ENDCG
         }

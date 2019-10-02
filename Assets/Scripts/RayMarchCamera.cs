@@ -54,6 +54,7 @@ public class RayMarchCamera : MonoBehaviour
         _raymarchMaterial.SetFloat("_maxDistance", _maxDistance);
 
         RenderTexture.active = destination;
+        _raymarchMaterial.SetTexture("_MainTex", source);
         GL.PushMatrix();
         GL.LoadOrtho();
         _raymarchMaterial.SetPass(0);
