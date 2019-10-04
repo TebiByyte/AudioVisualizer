@@ -59,11 +59,10 @@
 
 			float densityField(float3 p) 
 			{
-				//float sphere1 = sdSphere(p, 1);
 				float result = 0;
 
-				if (p.x > 0 && p.x < 5 && p.y > 0 && p.y < 5 && p.z > 0 && p.z < 5) {
-					result = tex3D(_NoiseTex, p / 5).x;
+				if (p.x > 0 && p.x < 10 && p.y > 0 && p.y < 10 && p.z > 0 && p.z < 10) {
+					result = 2 * tex3D(_NoiseTex, p / 10).x;
 				}
 
 				return result;
@@ -71,11 +70,11 @@
 
 			fixed4 raymarching(float3 ro, float3 rd) 
 			{
-				const int max_iteration = 64;
-				const int shadow_step = 1;
+				const int max_iteration = 100;
+				const int shadow_step = 8;
 				float t = 0;//Distance travelled.
 				float stepSize = 2.0f / max_iteration;
-				float shadowStepSize = 0.1f / shadow_step;
+				float shadowStepSize = 2.0f / shadow_step;
 				float3 lightEnergy = 0;
 				float density = stepSize;
 				float shadowDensity = shadowStepSize;

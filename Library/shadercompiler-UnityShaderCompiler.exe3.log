@@ -1,2 +1,7 @@
 Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
+Cmd: compileComputeKernel
+  api=4 insize=400 outsize=341 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at VolumeGenerator.compute(18): incorrect number of arguments to numeric-type constructor
+  api=4 insize=1599 outsize=0 ok=0

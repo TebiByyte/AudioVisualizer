@@ -62,9 +62,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Mouselook.cs" />
     <Compile Include="Assets\Scripts\RayMarchCamera.cs" />
-    <Compile Include="Assets\Scripts\SceneViewFilter.cs" />
     <None Include="Assets\Shaders\VolumeShader.shader" />
+    <None Include="Assets\Shaders\VolumeGenerator.compute" />
+    <None Include="Assets\Shaders\SimplexNoise.shader" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Redemption/Documents/Programming Projects/Unity/AudioVisualizer/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
