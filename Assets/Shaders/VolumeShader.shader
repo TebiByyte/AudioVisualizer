@@ -3,24 +3,26 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-		_NoiseTex("Texture", 3D) = "" {}
-    }
-    SubShader
-    {
-        // No culling or depth
-        Cull Off ZWrite Off ZTest Always
+		//_NoiseTex("Texture", 3D) = "" {}
+	}
+		SubShader
+	{
+		// No culling or depth
+		Cull Off ZWrite Off ZTest Always
 
-        Pass
-        {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+		Pass
+		{
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
 			#pragma target 3.0
 
-            #include "UnityCG.cginc"
+			#include "UnityCG.cginc"
 
+			Texture3D<float> _NoiseTex;
 			sampler2D _MainTex;
-			sampler3D _NoiseTex;
+			SamplerState sampler_NoiseTex;
+//			sampler3D _NoiseTex;
 			uniform float4x4 _CamFrustrum, _CamToWorld;
 			uniform float _maxDistance;
 			uniform float3 _lightDir;
@@ -61,8 +63,8 @@
 			{
 				float result = 0;
 
-				if (p.x > 0 && p.x < 10 && p.y > 0 && p.y < 10 && p.z > 0 && p.z < 10) {
-					result = 2 * tex3D(_NoiseTex, p / 10).x;
+				if (p.x > 0 && p.x < 5 && p.y > 0 && p.y < 5 && p.z > 0 && p.z < 5) {
+					result = 10 * _NoiseTex.SampleLevel(sampler_NoiseTex, p / 5, 0);
 				}
 
 				return result;

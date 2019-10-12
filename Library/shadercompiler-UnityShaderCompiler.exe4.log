@@ -1,9 +1,10 @@
-Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data/PlaybackEngines'
+Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=413 outsize=381 ok=1
+  api=4 insize=2797 outsize=2271 ok=1
 Cmd: compileComputeKernel
-  error: 2 plat 4 at VolumeGenerator.compute(14): undeclared identifier 'snoise'
-  api=4 insize=454 outsize=0 ok=0
+  api=4 insize=1371 outsize=2325 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=897 outsize=600 ok=1
+  api=4 insize=1375 outsize=1557 ok=1
+
+Quitting shader compiler process

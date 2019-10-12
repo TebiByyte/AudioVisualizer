@@ -1,5 +1,9 @@
-Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data/PlaybackEngines'
+Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 2 plat 4 at VolumeGenerator.compute(21): incorrect number of arguments to numeric-type constructor
-  api=4 insize=1049 outsize=0 ok=0
+  api=4 insize=565 outsize=789 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at ComputeConfinement.compute(22): implicit truncation of vector type
+  api=4 insize=1147 outsize=2057 ok=1
+
+Quitting shader compiler process

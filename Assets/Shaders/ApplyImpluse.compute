@@ -1,0 +1,19 @@
+﻿#pragma kernel Impulse
+#define NUM_THREADS 8
+
+float Radius, Amount, DeltaTime, Extinguishment;
+float4 Pos, Size;
+
+RWTexture3D<float> Write;
+Texture3D<float> Read;
+
+[numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
+void Impulse (uint3 id : SV_DispatchThreadID)
+{
+	float3 pos = id / (Size.xyz - 1.0f) - Pos.xyz;
+	float mag = pos.x * pos.x + pos.y * pos.y + pos.z * pos.z;
+	float rad2 = Radius * Radius;
+	float amount = exp(-mag / rad2) * Amount * DeltaTime;
+
+	Write[id] = Read[id] + amount;
+}

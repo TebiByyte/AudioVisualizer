@@ -1,0 +1,104 @@
+﻿#define NUM_THREADS 8
+
+
+float4 Size;
+float DeltaTime, Dissipate, Decay, Forward;
+
+Texture3D<float4> VelocityRead;
+RWTexture3D<int> Obstacles;
+
+RWTexture3D<float> Write1f;
+Texture3D<float> Read1f;
+SamplerState sampler_Read1f;
+
+RWTexture3D<float4> Write3f;
+Texture3D<float4> Read3f;
+SamplerState sampler_Read3f;
+
+Texture3D<float> Phi_n1_hat, Phi_n_hat;
+
+float sampleBilinear(Texture3D<float> buffer, float3 uv, float3 size) {
+	int x = uv.x;
+	int y = uv.y;
+	int z = uv.z;
+
+	float fx = uv.x - x;
+	float fy = uv.y - y;
+	float fz = uv.z - z;
+
+	int xp1 = min(size.x - 1, x + 1);
+	int yp1 = min(size.y - 1, y + 1);
+	int zp1 = min(size.z - 1, z + 1);
+
+	float x0 = buffer[uint3(x, y, z)] * (1 - fx) + buffer[uint3(xp1, y, z)] * fx;
+	float x1 = buffer[uint3(x, y, zp1)] * (1 - fx) + buffer[uint3(xp1, y, zp1)] * fx;
+
+	float x2 = buffer[uint3(x, yp1, z)] * (1 - fx) + buffer[uint3(xp1, yp1, z)] * fx;
+	float x3 = buffer[uint3(x, yp1, zp1)] * (1 - fx) + buffer[uint3(xp1, yp1, zp1)] * fx;
+
+	float z0 = x0 * (1 - fz) + x1 * fz;
+	float z1 = x2 * (1 - fz) + x3 * fz;
+
+	return z0 * (1 - fy) + z1 * fy;
+}
+
+float4 sampleBilinear(Texture3D<float4> buffer, float3 uv, float3 size) {
+	int x = floor(uv.x);
+	int y = floor(uv.y);
+	int z = floor(uv.z);
+
+	float fx = uv.x - x;
+	float fy = uv.y - y;
+	float fz = uv.z - z;
+
+	int xp1 = min(size.x - 1, x + 1);
+	int yp1 = min(size.y - 1, y + 1);
+	int zp1 = min(size.z - 1, z + 1);
+
+	float4 x0 = buffer[uint3(x, y, z)] * (1.0f - fx) + buffer[uint3(xp1, y, z)] * fx;
+	float4 x1 = buffer[uint3(x, y, zp1)] * (1.0f - fx) + buffer[uint3(xp1, y, zp1)] * fx;
+
+	float4 x2 = buffer[uint3(x, yp1, z)] * (1.0f - fx) + buffer[uint3(xp1, yp1, z)] * fx;
+	float4 x3 = buffer[uint3(x, yp1, zp1)] * (1.0f - fx) + buffer[uint3(xp1, yp1, zp1)] * fx;
+
+	float4 z0 = x0 * (1.0f - fz) + x1 * fz;
+	float4 z1 = x2 * (1.0f - fz) + x3 * fz;
+
+	return z0 * (1.0f - fy) + z1 * fy;
+}
+
+float3 getAdvectedPosTexCoords(float3 pos, uint3 id) {
+	pos -= DeltaTime * Forward * VelocityRead[id].xyz;
+
+	return pos;
+}
+
+#pragma kernel Advect
+
+[numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
+void Advect (uint3 id : SV_DispatchThreadID)
+{
+	if (Obstacles[id] > 0.1) {
+		Write1f[id] = 0;
+		return;
+	}
+
+	float3 uv = getAdvectedPosTexCoords(float3(id.x, id.y, id.z), id);
+
+	Write1f[id] = max(0, sampleBilinear(Read1f, uv, Size.xyz) * Dissipate - Decay);
+}
+
+#pragma kernel AdvectVelocity
+
+[numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
+void AdvectVelocity(uint3 id : SV_DispatchThreadID) {
+
+	if (Obstacles[id] > 0.1) {
+		Write3f[id] = float4(0, 0, 0, 0);
+		return;
+	}
+
+	float3 uv = getAdvectedPosTexCoords(float3(id.x, id.y, id.z), id);
+
+	Write3f[id] = sampleBilinear(Read3f, uv, Size.xyz) * Dissipate;
+}

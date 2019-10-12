@@ -1,9 +1,10 @@
-Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data/PlaybackEngines'
+Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 2 plat 4 at VolumeGenerator.compute(3): failed to open source file: 'HLSL/SimplexNoise3D.hlsl'
-  api=4 insize=491 outsize=0 ok=0
+  api=4 insize=2794 outsize=2243 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=895 outsize=600 ok=1
+  api=4 insize=561 outsize=578 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=548 outsize=1074 ok=1
 
 Quitting shader compiler process

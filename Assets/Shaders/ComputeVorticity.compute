@@ -1,0 +1,24 @@
+﻿#define NUM_THREADS 8
+#pragma kernel CSMain
+
+float4 Size;
+
+RWTexture3D<float4> VelocityWrite;
+Texture3D<float4> VelocityRead;
+
+[numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	float4 L = VelocityRead[uint3(max(0, id.x - 1), id.y, id.z)];
+	float4 R = VelocityRead[uint3(min(Size.x - 1, id.x + 1), id.y, id.z)];
+
+	float4 D = VelocityRead[uint3(id.x, max(0, id.y - 1), id.z)];
+	float4 U = VelocityRead[uint3(id.x, min(Size.y - 1, id.y + 1), id.z)];
+
+	float4 B = VelocityRead[uint3(id.x, id.y, max(0, id.z - 1))];
+	float4 T = VelocityRead[uint3(id.x, id.y, min(Size.z - 1, id.z + 1))];
+
+	float4 vorticity = 0.5f * float4(((T.z - B.z) - (U.y - D.y)), ((U.x - D.x) - (R.z - L.z)), ((R.y - L.y) - (T.x - B.x)), 0);
+
+	VelocityWrite[id] = vorticity;
+}

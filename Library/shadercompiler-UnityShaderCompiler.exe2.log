@@ -1,18 +1,8 @@
-Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data/PlaybackEngines'
+Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 2 plat 4 at VolumeGenerator.compute(13): cannot map expression to cs_5_0 instruction set
-  api=4 insize=409 outsize=0 ok=0
+  api=4 insize=2797 outsize=2206 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=413 outsize=381 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=492 outsize=3973 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=455 outsize=3973 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=891 outsize=4224 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=893 outsize=4224 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at VolumeGenerator.compute(22): syntax error: unexpected token ']'
-  api=4 insize=1599 outsize=0 ok=0
+  api=4 insize=551 outsize=1002 ok=1
+
+Quitting shader compiler process

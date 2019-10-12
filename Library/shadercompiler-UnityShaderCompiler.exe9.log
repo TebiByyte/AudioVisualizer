@@ -1,13 +1,6 @@
-Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data/PlaybackEngines'
+Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=486 outsize=3965 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at VolumeGenerator.compute(10): the product of the arguments of numthreads(16,16,16) must be less than or equal to 1024
-  api=4 insize=495 outsize=0 ok=0
-Cmd: compileComputeKernel
-  api=4 insize=722 outsize=494 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=857 outsize=4496 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=856 outsize=4520 ok=1
+  api=4 insize=1377 outsize=2325 ok=1
+
+Quitting shader compiler process

@@ -1,0 +1,43 @@
+﻿#define NUM_THREADS 8
+#pragma kernel CSMain
+
+float4 Size;
+
+RWTexture3D<float4> Temp3f;
+Texture3D<float4> VelocityRead;
+Texture3D<int> Obstacles;
+
+[numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	uint3 Lp = uint3(max(0, id.x - 1), id.y, id.z);
+	uint3 Rp = uint3(min(Size.x - 1, id.x + 1), id.y, id.z);
+	uint3 Dp = uint3(id.x, max(0, id.y - 1), id.z);
+	uint3 Up = uint3(id.x, min(Size.y - 1, id.y + 1), id.z);
+	uint3 Bp = uint3(id.x, id.y, max(0, id.z - 1));
+	uint3 Tp = uint3(id.x, id.y, min(Size.z - 1, id.z + 1));
+
+	float4 L = VelocityRead[Lp];
+	float4 R = VelocityRead[Rp];
+
+	float4 D = VelocityRead[Dp];
+	float4 U = VelocityRead[Up];
+
+	float4 B = VelocityRead[Bp];
+	float4 T = VelocityRead[Tp];
+
+	float4 obstacleVelocity = float4(0, 0, 0, 0);
+
+	if (Obstacles[Lp] > 0.1f) L = obstacleVelocity;
+	if (Obstacles[Lp] > 0.1f) R = obstacleVelocity;
+
+	if (Obstacles[Lp] > 0.1f) B = obstacleVelocity;
+	if (Obstacles[Lp] > 0.1f) T = obstacleVelocity;
+
+	if (Obstacles[Lp] > 0.1f) D = obstacleVelocity;
+	if (Obstacles[Lp] > 0.1f) U = obstacleVelocity;
+
+	float divergence = 0.5f * ((R.x - L.x) + (T.y - B.y) + (U.z - D.z));
+
+	Temp3f[id] = float4(divergence, 0, 0, 0);
+}

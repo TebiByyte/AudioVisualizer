@@ -1,0 +1,31 @@
+﻿#define NUM_THREADS 8
+#pragma kernel CSMain
+
+float4 Size;
+float DeltaTime, Epsilon;
+
+RWTexture3D<float4> VelocityWrite;
+Texture3D<float4> Vorticity, VelocityRead;
+
+[numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	float omegaL = length(VelocityRead[uint3(max(0, id.x - 1), id.y, id.z)]);
+	float omegaR = length(VelocityRead[uint3(min(Size.x - 1, id.x + 1), id.y, id.z)]);
+
+	float omegaD = length(VelocityRead[uint3(id.x, max(0, id.y - 1), id.z)]);
+	float omegaU = length(VelocityRead[uint3(id.x, min(Size.y - 1, id.y + 1), id.z)]);
+
+	float omegaB = length(VelocityRead[uint3(id.x, id.y, max(0, id.z - 1))]);
+	float omegaT = length(VelocityRead[uint3(id.x, id.y, min(Size.z - 1, id.z + 1))]);
+
+	float3 omega = Vorticity[id];
+
+	float3 eta = 0.5f * float3(omegaR - omegaL, omegaT - omegaB, omegaU - omegaD);
+
+	eta = normalize(eta + float3(0.001f, 0.001f, 0.001f));
+
+	float4 force = DeltaTime * Epsilon * float4(eta.y * omega.z - eta.z * omega.y, eta.z * omega.x - eta.x * omega.z, eta.x * omega.y - eta.y * omega.x, 0);
+
+	VelocityWrite[id] = VelocityRead[id] + force;
+}

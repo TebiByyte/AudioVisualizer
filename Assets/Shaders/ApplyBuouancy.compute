@@ -1,0 +1,23 @@
+﻿#define NUM_THREADS 8
+#pragma kernel CSMain
+
+float4 Size, Up;
+float AmbientTemp, DeltaTime, Buoyancy, Weight;
+
+RWTexture3D<float4> VelocityWrite;
+Texture3D<float4> VelocityRead;
+Texture3D<float> Density, Temperature;
+
+[numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	float T = Temperature[id];
+	float D = Density[id];
+	float4 V = VelocityRead[id];
+
+	if (T > AmbientTemp) {
+		V += (DeltaTime * (T - AmbientTemp) * Buoyancy - D * Weight) * Up;
+	}
+
+	VelocityWrite[id] = V;
+}

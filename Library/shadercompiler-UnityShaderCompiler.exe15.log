@@ -1,7 +1,7 @@
-Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.2f1/Editor/Data/PlaybackEngines'
+Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 2 plat 4 at VolumeGenerator.compute(19): undeclared identifier 'st_bound'
-  api=4 insize=815 outsize=0 ok=0
-Cmd: compileComputeKernel
-  api=4 insize=1600 outsize=3980 ok=1
+  error: 2 plat 4 at ApplyAdvection.compute(88): 'SampleLevel': no matching 2 parameter intrinsic method; Possible intrinsic methods are: Texture3D<float>.SampleLevel(SamplerState, float3|half3|min10float3|min16float3, float1|half1|min10float1|min16float1) Texture3D<float>.SampleLevel(SamplerState, float3|half3|min10float3|min16float3, float1|half1|min10float1|min16float1, int3) Texture3D<float>.SampleLevel(SamplerState, float3|half3|min10float3|min16float3, float1|half1|min10float1|min16float1, int3, out uint status)
+  api=4 insize=2772 outsize=0 ok=0
+
+Quitting shader compiler process
