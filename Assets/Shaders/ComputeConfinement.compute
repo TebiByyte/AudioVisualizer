@@ -5,7 +5,7 @@ float4 Size;
 float DeltaTime, Epsilon;
 
 RWTexture3D<float4> VelocityWrite;
-Texture3D<float4> Vorticity, VelocityRead;
+RWTexture3D<float4> Vorticity, VelocityRead;
 
 [numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
 void CSMain (uint3 id : SV_DispatchThreadID)

@@ -1,8 +1,7 @@
 Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=2797 outsize=2271 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=2798 outsize=2206 ok=1
+  error: 2 plat 4 at ApplyAdvection.compute(86): 'sampleBilinear': cannot implicitly convert from 'RWTexture3D<float>' to 'Texture3D<float4>'
+  api=4 insize=2740 outsize=0 ok=0
 
 Quitting shader compiler process

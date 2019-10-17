@@ -4,8 +4,8 @@
 float4 Size;
 
 RWTexture3D<float4> Temp3f;
-Texture3D<float4> VelocityRead;
-Texture3D<int> Obstacles;
+RWTexture3D<float4> VelocityRead;
+RWTexture3D<int> Obstacles;
 
 [numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
 void CSMain (uint3 id : SV_DispatchThreadID)

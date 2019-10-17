@@ -5,7 +5,7 @@ float Radius, Amount, DeltaTime, Extinguishment;
 float4 Pos, Size;
 
 RWTexture3D<float> Write;
-Texture3D<float> Read;
+RWTexture3D<float> Read;
 
 [numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
 void Impulse (uint3 id : SV_DispatchThreadID)

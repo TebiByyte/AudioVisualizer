@@ -59,7 +59,7 @@ public class RayMarchCamera : MonoBehaviour
     }
 
     public RenderTexture densityWrite, velocityWrite, pressureWrite, temperatureWrite, phiWrite, temp3f, obstacles;
-    public Texture3D densityRead, velocityRead, pressureRead, temperatureRead, phiRead;
+    public RenderTexture densityRead, velocityRead, pressureRead, temperatureRead, phiRead;
 
     public ComputeShader applyImpulse, applyAdvect, computeVorticity;
     public ComputeShader computeDivergence, computeJacobi, computeProjection;
@@ -106,7 +106,7 @@ public class RayMarchCamera : MonoBehaviour
         _raymarchMaterial.SetMatrix("_CamFrustrum", CamFrustrum(_camera));
         _raymarchMaterial.SetMatrix("_CamToWorld", _camera.cameraToWorldMatrix);
         _raymarchMaterial.SetFloat("_maxDistance", _maxDistance);
-        _raymarchMaterial.SetTexture("_NoiseTex", densityRead);
+        _raymarchMaterial.SetTexture("_NoiseTex", densityWrite);
 
         RenderTexture.active = destination;
         _raymarchMaterial.SetTexture("_MainTex", source);
@@ -142,18 +142,20 @@ public class RayMarchCamera : MonoBehaviour
         temp3f = createTexture(SIZE, RenderTextureFormat.ARGBFloat);
         obstacles = createTexture(SIZE, RenderTextureFormat.RInt);
 
-        densityRead = new Texture3D(SIZE, SIZE, SIZE, TextureFormat.RFloat, 0);
-        velocityRead = new Texture3D(SIZE, SIZE, SIZE, TextureFormat.RGBAFloat, 0);
-        pressureRead = new Texture3D(SIZE, SIZE, SIZE, TextureFormat.RFloat, 0);
-        temperatureRead = new Texture3D(SIZE, SIZE, SIZE, TextureFormat.RFloat, 0);
-        phiRead = new Texture3D(SIZE, SIZE, SIZE, TextureFormat.RFloat, 0);
+        densityRead = createTexture(SIZE, RenderTextureFormat.RFloat);
+        velocityRead = createTexture(SIZE, RenderTextureFormat.ARGBFloat);
+        pressureRead = createTexture(SIZE, RenderTextureFormat.RFloat);
+        temperatureRead = createTexture(SIZE, RenderTextureFormat.RFloat);
+        phiRead = createTexture(SIZE, RenderTextureFormat.RFloat);
 
-        //setObstacles();
+        setObstacles();
     }
 
-    void copyWrite(RenderTexture src, Texture3D dst)
+    void copyWrite(RenderTexture src, RenderTexture dst)
     {
-        Graphics.CopyTexture(src, 0, 0, dst, 0, 0);
+        RenderTexture tmp = dst;
+        dst = src;
+        src = tmp;
     }
 
     public void setObstacles()
@@ -163,7 +165,7 @@ public class RayMarchCamera : MonoBehaviour
         computeObstacles.Dispatch(0, SIZE / NUM_THREADS, SIZE / NUM_THREADS, SIZE / NUM_THREADS);
     }
 
-    public void addImpluse(float dt, float amount, RenderTexture write, Texture3D read)
+    public void addImpluse(float dt, float amount, RenderTexture write, RenderTexture read)
     {
         applyImpulse.SetVector("Size", new Vector4(SIZE, SIZE, SIZE, SIZE));
         applyImpulse.SetFloat("Radius", inputRadius);
@@ -197,7 +199,7 @@ public class RayMarchCamera : MonoBehaviour
         copyWrite(velocityWrite, velocityRead);
     }
 
-    public void advect(float dt, float dissipation, float decay, RenderTexture write, Texture3D read, float foward = 1.0f)
+    public void advect(float dt, float dissipation, float decay, RenderTexture write, RenderTexture read, float foward = 1.0f)
     {
         applyAdvect.SetVector("Size", new Vector4(SIZE, SIZE, SIZE, SIZE));
         applyAdvect.SetFloat("DeltaTime", dt);
@@ -205,7 +207,7 @@ public class RayMarchCamera : MonoBehaviour
         applyAdvect.SetFloat("Forward", foward);
         applyAdvect.SetFloat("Decay", decay);
 
-        applyAdvect.SetTexture(0, "Read1f", read);
+        applyAdvect.SetTexture(0, "Read1f", read);  
         applyAdvect.SetTexture(0, "Write1f", write);
         applyAdvect.SetTexture(0, "VelocityRead", velocityRead);
         applyAdvect.SetTexture(0, "Obstacles", obstacles);
@@ -278,7 +280,7 @@ public class RayMarchCamera : MonoBehaviour
 
             computeJacobi.Dispatch(0, SIZE / NUM_THREADS, SIZE / NUM_THREADS, SIZE / NUM_THREADS);
 
-            //copyWrite(pressureWrite, pressureRead);
+            copyWrite(pressureWrite, pressureRead);
         }
 
         copyWrite(pressureWrite, pressureRead);
@@ -325,7 +327,7 @@ public class RayMarchCamera : MonoBehaviour
 
     public RenderTexture createTexture(int size, RenderTextureFormat format)
     {
-        RenderTexture result = new RenderTexture(size, size, 0);
+        RenderTexture result = new RenderTexture(size, size, 0, format, 10);
         result.enableRandomWrite = true;
         result.volumeDepth = size;
         result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;

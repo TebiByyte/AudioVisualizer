@@ -5,8 +5,8 @@ float4 Size, Up;
 float AmbientTemp, DeltaTime, Buoyancy, Weight;
 
 RWTexture3D<float4> VelocityWrite;
-Texture3D<float4> VelocityRead;
-Texture3D<float> Density, Temperature;
+RWTexture3D<float4> VelocityRead;
+RWTexture3D<float> Density, Temperature;
 
 [numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
 void CSMain (uint3 id : SV_DispatchThreadID)

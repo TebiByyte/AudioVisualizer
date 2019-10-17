@@ -4,20 +4,18 @@
 float4 Size;
 float DeltaTime, Dissipate, Decay, Forward;
 
-Texture3D<float4> VelocityRead;
+RWTexture3D<float4> VelocityRead;
 RWTexture3D<int> Obstacles;
 
 RWTexture3D<float> Write1f;
-Texture3D<float> Read1f;
-SamplerState sampler_Read1f;
+RWTexture3D<float> Read1f;
 
 RWTexture3D<float4> Write3f;
-Texture3D<float4> Read3f;
-SamplerState sampler_Read3f;
+RWTexture3D<float4> Read3f;
 
-Texture3D<float> Phi_n1_hat, Phi_n_hat;
+RWTexture3D<float> Phi_n1_hat, Phi_n_hat;
 
-float sampleBilinear(Texture3D<float> buffer, float3 uv, float3 size) {
+float sampleBilinear(RWTexture3D<float> buffer, float3 uv, float3 size) {
 	int x = uv.x;
 	int y = uv.y;
 	int z = uv.z;
@@ -42,7 +40,7 @@ float sampleBilinear(Texture3D<float> buffer, float3 uv, float3 size) {
 	return z0 * (1 - fy) + z1 * fy;
 }
 
-float4 sampleBilinear(Texture3D<float4> buffer, float3 uv, float3 size) {
+float4 sampleBilinear(RWTexture3D<float4> buffer, float3 uv, float3 size) {
 	int x = floor(uv.x);
 	int y = floor(uv.y);
 	int z = floor(uv.z);

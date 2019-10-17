@@ -1,12 +1,9 @@
 Base path: 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=2798 outsize=2271 ok=1
+  api=4 insize=516 outsize=933 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=2811 outsize=1339 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=1370 outsize=2173 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=1373 outsize=1517 ok=1
+  error: 1 plat 4 at ComputeConfinement.compute(22): implicit truncation of vector type
+  api=4 insize=1152 outsize=1961 ok=1
 
 Quitting shader compiler process

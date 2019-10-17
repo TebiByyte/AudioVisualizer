@@ -64,7 +64,7 @@
 				float result = 0;
 
 				if (p.x > 0 && p.x < 5 && p.y > 0 && p.y < 5 && p.z > 0 && p.z < 5) {
-					result = 10 * _NoiseTex.SampleLevel(sampler_NoiseTex, p / 5, 0);
+					result = 100 * _NoiseTex.SampleLevel(sampler_NoiseTex, p / 5, 0);
 				}
 
 				return result;

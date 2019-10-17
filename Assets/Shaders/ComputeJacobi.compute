@@ -4,8 +4,8 @@
 float4 Size;
 
 RWTexture3D<float> PressureWrite;
-Texture3D<float> PressureRead;
-Texture3D<int> Obstacles;
+RWTexture3D<float> PressureRead;
+RWTexture3D<int> Obstacles;
 RWTexture3D<float4> Divergence;
 
 [numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
